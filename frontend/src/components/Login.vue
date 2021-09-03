@@ -8,21 +8,21 @@
                 auto-complete="off" placeholder="学号"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-input type="password"  v-model="loginForm.password"
+      <el-input type="password" v-model="loginForm.password"
                 auto-complete="off" placeholder="密码"></el-input>
     </el-form-item>
     <el-form-item style="width: 100%">
-      <el-button  style="width: 30%" @click="login" round>注册</el-button>
+      <el-button style="width: 30%" @click="login" round>注册</el-button>
       <el-button type="primary" style="width: 30%;background: #505458;border: none" @click="login" round>登录</el-button>
     </el-form-item>
   </el-form>
 
-  <el-dialog  title="提示"
-              :visible.sync="dialogVisible"
-              :modal=false
-              :close-on-press-escape=false
-              :close-on-click-modal=false
-              width="30%">
+  <el-dialog title="提示"
+             :visible.sync="dialogVisible"
+             :modal=false
+             :close-on-press-escape=false
+             :close-on-click-modal=false
+             width="30%">
     <span>学号或密码错误</span>
     <span slot="footer" class="dialog-footer">
     <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
@@ -35,7 +35,7 @@
 <script>
 export default {
   name: 'Login',
-  data () {
+  data() {
     return {
       loginForm: {
         username: '',
@@ -46,25 +46,34 @@ export default {
     }
   },
   methods: {
-    login () {
+    login() {
       const _this = this;
       console.log(_this.$store.state)
+      console.log(this.loginForm)
       this.$axios
-          .post('/', {
-            username: this.loginForm.username,
-            password: this.loginForm.password
-          })
+          // .post('/', {
+          //   username: this.loginForm.username,
+          //   password: this.loginForm.password
+          // })
+          .post('/', this.$qs.stringify(this.loginForm))
           .then((successResponse) => {
-            if (successResponse.data.code === 200) {
+            if (successResponse.status === 200) {
+              console.log(successResponse.data)
               _this.$store.commit('login', _this.loginForm)
-              var path = this.$route.query.redirect
-              this.$router.replace({path: path === '/' || path === undefined ? '/index' : path})
-            } else if (successResponse.data.code === 400) {
+              // var path = this.$route.query.redirect
+              this.$router.replace({
+                name: 'AppIndex',
+                params: successResponse.data
+              }).catch(() => {
+              })
+            } else if (successResponse.status === 400) {
               _this.dialogVisible = true
               console.log(_this.dialogVisible)
             }
           })
-          .catch(() => { })
+          .catch(() => {
+            console.log('fail!');
+          })
     }
   }
 }
@@ -72,16 +81,18 @@ export default {
 
 <style>
 #poster {
-  background:url("../assets/rick&morty.jpg") no-repeat;
+  background: url("../assets/rick&morty.jpg") no-repeat;
   background-position: center;
   height: 100%;
   width: 100%;
   background-size: cover;
   position: fixed;
 }
-body{
-  margin: 0px;
+
+body {
+  margin: 0;
 }
+
 .login-container {
   border-radius: 15px;
   background-clip: padding-box;
@@ -92,8 +103,9 @@ body{
   border: 1px solid #eaeaea;
   box-shadow: 0 0 25px #cac6c6;
 }
+
 .login_title {
-  margin: 0px auto 40px auto;
+  margin: 0 auto 40px auto;
   text-align: center;
   color: #505458;
 }
