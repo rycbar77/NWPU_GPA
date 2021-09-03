@@ -20,11 +20,14 @@ router.beforeEach((to, from, next) => {
             })
         } else {
             if (to.meta.requireAuth) {
-                next({
-                    path: 'login',
-                    query: {redirect: to.fullPath}
-                })
-
+                if (store.state.user.username) {
+                    next()
+                } else {
+                    next({
+                        path: 'login',
+                        query: {redirect: to.fullPath}
+                    })
+                }
             } else {
                 next()
             }

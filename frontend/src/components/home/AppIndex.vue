@@ -10,50 +10,68 @@
 
     </el-header>
     <el-main>
-      <el-card>
-        <el-descriptions title="信息">
-          <el-descriptions-item label="学号">{{ this.$store.state.user.username }}</el-descriptions-item>
-          <el-descriptions-item label="学分绩">{{ average.toFixed(2) }}</el-descriptions-item>
+      <div class="frame">
+        <el-card>
+          <el-descriptions title="信息">
+            <el-descriptions-item label="学号">{{ this.$store.state.user.username }}</el-descriptions-item>
+            <el-descriptions-item label="学分绩">{{ average.toFixed(2) }}</el-descriptions-item>
 
-        </el-descriptions>
-      </el-card>
-      <el-card>
-        <el-table
-            :data="tableData"
-            stripe
-            height="400"
-        >
-          <el-table-column
-              prop="name"
-              label="课程名"
-          >
-          </el-table-column>
-          <el-table-column
-              prop="credit"
-              label="学分"
-          >
-          </el-table-column>
-          <el-table-column
-              prop="score.total"
-              label="成绩"
-          >
-          </el-table-column>
-          <el-table-column
-              label="选择"
-          >
-            <template slot-scope="scope">
-              <el-switch
-                  v-model="scope.row.status"
-                  :active-value="1"
-                  :inactive-value="0"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  @change="changeSwitch(scope.row)"/>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-
+          </el-descriptions>
+        </el-card>
+        <div v-for="index in tableData.length" :key="index">
+          <el-card>
+            <el-container>
+              <el-tag effect="plain">
+                {{ tableData[index - 1][Object.keys(tableData[index - 1])[0]]["semester"] }}
+              </el-tag>
+              <el-col :span="15"></el-col>
+              <el-col :push="1">
+                <el-switch
+                    v-model="semester_statuses[index-1]"
+                    :active-value="1"
+                    :inactive-value="0"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    @change="changeSwitchAll(index-1)"/>
+              </el-col>
+            </el-container>
+            <el-table
+                :data="tableData[index-1]"
+                stripe
+                height="400"
+            >
+              <el-table-column
+                  prop="name"
+                  label="课程名"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="credit"
+                  label="学分"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="score.total"
+                  label="成绩"
+              >
+              </el-table-column>
+              <el-table-column
+                  label="选择"
+              >
+                <template slot-scope="scope">
+                  <el-switch
+                      v-model="tableData[index-1][scope.$index].status"
+                      :active-value="1"
+                      :inactive-value="0"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                      @change="changeSwitch(scope.row)"/>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+        </div>
+      </div>
     </el-main>
   </el-container>
   <!--    <div v-for="course in courses" :key="course.index">-->
@@ -73,33 +91,54 @@ export default {
       tableData: [],
       creditSum: 0,
       scoreSum: 0,
-      average: 0
+      average: 0,
+      semester_statuses: [],
+      course_statuses: []
     }
   },
   methods: {
     parse_course() {
-      let table = [];
+      let table = []
+      let semester_name = ""
+      let tmp_semester_name = ""
+      let semester_table = []
+      let status = 1
       for (const id in this.courses) {
         let tmp = this.courses[id]
+        semester_name = tmp["semester"]
+        // console.log(semester_name)
+        if (semester_name !== tmp_semester_name && tmp_semester_name !== "") {
+          // console.log(semester_table)
+          table.push(semester_table)
+          this.semester_statuses.push(status)
+          semester_table = []
+        }
+        tmp_semester_name = semester_name
         let total = tmp["score"]["total"]
         // console.log(Number(total))
         tmp["score"]["total"] = Number(total) ? Number(total) : total
         tmp['status'] = Number(total) && Number(tmp["credit"]) !== 0 ? 1 : 0
+        // this.course_statuses.push(Number(total) && Number(tmp["credit"]) !== 0 ? 1 : 0)
+        if (!tmp["status"]) {
+          status = 0
+        }
         this.creditSum += Number(total) ? Number(tmp["credit"]) : 0
         this.scoreSum += Number(total) ? Number(total) * Number(tmp["credit"]) : 0
-        table.push(tmp)
+        semester_table.push(tmp)
       }
-      console.log(this.scoreSum)
-      console.log(this.creditSum)
+      table.push(semester_table)
+      semester_table = []
+      this.semester_statuses.push(status)
+      // console.log(this.scoreSum)
+      // console.log(this.creditSum)
       this.average = this.scoreSum / this.creditSum
-      // console.log(table)
+      console.log(table)
       this.tableData = table
     },
     goBack() {
       this.$router.push({path: '/'})
     },
     changeSwitch(row) {
-      // console.log(row);
       if (Number(row["score"]["total"])) {
         if (row["status"]) {
           this.creditSum += Number(row["credit"])
@@ -112,6 +151,14 @@ export default {
         }
       }
 
+    },
+    changeSwitchAll(index) {
+      // let table = this.tableData[index]
+      //
+      // for (let j = 0, len = table.length; j < len; j++) {
+      //   table[j]["status"] = this.statuses[index]
+      // }
+      console.log(index)
     }
   },
   mounted() {
@@ -125,5 +172,20 @@ export default {
 <style scoped>
 .el-card {
   margin-bottom: 20px;
+}
+
+.el-row {
+  margin-bottom: 10px;
+}
+
+.el-col {
+  margin-bottom: 10px;
+  margin-right: 8px;
+  margin-left: 8px;
+}
+
+.frame {
+  width: 900px;
+  margin: 0 auto;
 }
 </style>

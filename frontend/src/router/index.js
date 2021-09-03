@@ -10,14 +10,12 @@ export default new Router({
     mode: 'history',
     routes: [
         {
-
             path: '/index',
             name: 'AppIndex',
             component: AppIndex,
             meta: {
                 requireAuth: true
             }
-
         },
         {
             path: '/login',
