@@ -15,13 +15,13 @@ CORS(app, resources=r'/*')
 
 @app.route('/', methods=['POST'])
 def getscore():
-    print(request.form)
+    # print(request.form)
     username = request.form['username']
     password = request.form['password']
     courses = get_score(username, password)
-    print(courses, file=sys.stderr)
+    # print(courses, file=sys.stderr)
     response = make_response(jsonify(courses), 200)
-    print(response)
+    # print(response)
     return response
 
 
