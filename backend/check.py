@@ -4,6 +4,8 @@ from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
+
+
 # from fake_useragent import UserAgent
 
 
@@ -60,22 +62,22 @@ def get_score(username, password):
                     tmp_score = [i.strip() if i else i for i in tmp_score]
                     course = Course(li[4].string.strip() if li[4].string else li[4].string,
                                     li[3].a.string.strip(
-                    ) if li[3].a.string else li[3].a.string,
-                        li[0].string.strip(
-                    ) if li[0].string else li[0].string,
-                        li[5].string.strip() if li[5].string else li[5].string,
-                        Score(
-                        li[6].string.strip(
-                        ) if li[6].string else li[6].string,
-                        li[7].string.strip(
-                        ) if li[7].string else li[7].string,
-                        li[8].string.strip(
-                        ) if li[8].string else li[8].string,
-                        li[9].string.strip(
-                        ) if li[9].string else li[9].string,
-                        li[10].string.strip(
-                        ) if li[10].string else li[10].string
-                    ))
+                                    ) if li[3].a.string else li[3].a.string,
+                                    li[0].string.strip(
+                                    ) if li[0].string else li[0].string,
+                                    li[5].string.strip() if li[5].string else li[5].string,
+                                    Score(
+                                        li[6].string.strip(
+                                        ) if li[6].string else li[6].string,
+                                        li[7].string.strip(
+                                        ) if li[7].string else li[7].string,
+                                        li[8].string.strip(
+                                        ) if li[8].string else li[8].string,
+                                        li[9].string.strip(
+                                        ) if li[9].string else li[9].string,
+                                        li[10].string.strip(
+                                        ) if li[10].string else li[10].string
+                                    ))
                     courses.append(course)
                     li.clear()
         else:
@@ -89,7 +91,7 @@ def get_score(username, password):
                       'final': course.score.final, 'total': course.score.total}
         course_info['score'] = score_info
         courses_info[i] = course_info
-    print(courses_info)
+    # print(courses_info)
     return courses_info
 
 
