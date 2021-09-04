@@ -2,7 +2,7 @@
   <body id="poster">
   <el-form class="login-container" label-position="left"
            label-width="0px">
-    <h3 class="login_title">系统登录</h3>
+    <h3 class="login_title">学分绩查询</h3>
     <el-form-item>
       <el-input type="text" v-model="loginForm.username"
                 auto-complete="off" placeholder="学号"></el-input>
@@ -12,8 +12,8 @@
                 auto-complete="off" placeholder="密码"></el-input>
     </el-form-item>
     <el-form-item style="width: 100%">
-      <el-button style="width: 30%" @click="login" round>注册</el-button>
-      <el-button type="primary" style="width: 30%;background: #505458;border: none" @click="login" round>登录</el-button>
+<!--      <el-button style="width: 30%" @click="login" round>注册</el-button>-->
+      <el-button type="primary" style="width: 30%;background: #505458;border: none" @click="login" round>查询</el-button>
     </el-form-item>
   </el-form>
 
@@ -58,9 +58,10 @@ export default {
           .post('/', this.$qs.stringify(this.loginForm))
           .then((successResponse) => {
             if (successResponse.status === 200) {
-              console.log(successResponse.data)
+              // console.log(successResponse.data)
               _this.$store.commit('login', _this.loginForm)
               // var path = this.$route.query.redirect
+              // console.log(successResponse.data)
               this.$router.replace({
                 name: 'AppIndex',
                 params: successResponse.data

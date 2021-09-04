@@ -90,7 +90,7 @@ def get_score(username, password):
         score_info = {'regular': course.score.regular, 'semi': course.score.semi, 'experiment': course.score.experiment,
                       'final': course.score.final, 'total': course.score.total}
         course_info['score'] = score_info
-        courses_info[i] = course_info
+        courses_info[i + 1] = course_info
     # print(courses_info)
     return courses_info
 

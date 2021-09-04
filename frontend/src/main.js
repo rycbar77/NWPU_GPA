@@ -14,6 +14,9 @@ Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 router.beforeEach((to, from, next) => {
+        if (to.meta.title) {
+            document.title = to.meta.title
+        }
         if (to.fullPath === '/') {
             next({
                 path: 'login'

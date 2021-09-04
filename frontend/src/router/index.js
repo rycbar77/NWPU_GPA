@@ -14,13 +14,17 @@ export default new Router({
             name: 'AppIndex',
             component: AppIndex,
             meta: {
-                requireAuth: true
+                requireAuth: true,
+                title: "详情"
             }
         },
         {
             path: '/login',
             name: 'Login',
-            component: Login
+            component: Login,
+            meta:{
+                title: "学分绩查询"
+            }
         }
     ]
 })
