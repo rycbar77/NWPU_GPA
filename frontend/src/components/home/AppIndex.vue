@@ -36,7 +36,7 @@
               </el-col>
             </el-container>
             <el-table
-                :data="tableData[index-1]"
+                :data="test"
                 stripe
                 height="400"
             >
@@ -60,7 +60,7 @@
               >
                 <template slot-scope="scope">
                   <el-switch
-                      v-model="tableData[index-1][scope.$index].status"
+                      v-model="scope.row.status"
                       :active-value="1"
                       :inactive-value="0"
                       active-color="#13ce66"
@@ -93,7 +93,8 @@ export default {
       scoreSum: 0,
       average: 0,
       semester_statuses: [],
-      course_statuses: []
+      course_statuses: [],
+      test: []
     }
   },
   methods: {
@@ -102,7 +103,7 @@ export default {
       let semester_name = ""
       let tmp_semester_name = ""
       let semester_table = []
-      let status = 1
+      let tmp_status = 1
       for (const id in this.courses) {
         let tmp = this.courses[id]
         semester_name = tmp["semester"]
@@ -110,7 +111,7 @@ export default {
         if (semester_name !== tmp_semester_name && tmp_semester_name !== "") {
           // console.log(semester_table)
           table.push(semester_table)
-          this.semester_statuses.push(status)
+          this.semester_statuses.push(tmp_status)
           semester_table = []
         }
         tmp_semester_name = semester_name
@@ -120,7 +121,7 @@ export default {
         tmp['status'] = Number(total) && Number(tmp["credit"]) !== 0 ? 1 : 0
         // this.course_statuses.push(Number(total) && Number(tmp["credit"]) !== 0 ? 1 : 0)
         if (!tmp["status"]) {
-          status = 0
+          tmp_status = 0
         }
         this.creditSum += Number(total) ? Number(tmp["credit"]) : 0
         this.scoreSum += Number(total) ? Number(total) * Number(tmp["credit"]) : 0
@@ -128,12 +129,14 @@ export default {
       }
       table.push(semester_table)
       semester_table = []
-      this.semester_statuses.push(status)
+      this.semester_statuses.push(tmp_status)
       // console.log(this.scoreSum)
       // console.log(this.creditSum)
       this.average = this.scoreSum / this.creditSum
-      console.log(table)
+      // console.log(table)
       this.tableData = table
+      this.test = table[0]
+      // console.log(this.test)
     },
     goBack() {
       this.$router.push({path: '/'})
@@ -153,12 +156,12 @@ export default {
 
     },
     changeSwitchAll(index) {
-      // let table = this.tableData[index]
-      //
-      // for (let j = 0, len = table.length; j < len; j++) {
-      //   table[j]["status"] = this.statuses[index]
-      // }
-      console.log(index)
+      let table = this.tableData[index]
+
+      for (let j = 0, len = table.length; j < len; j++) {
+        table[j]["status"] = this.semester_statuses[index]
+      }
+      // console.log(index)
     }
   },
   mounted() {
